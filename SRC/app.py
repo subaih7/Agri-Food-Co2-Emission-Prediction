@@ -14,7 +14,7 @@ st.set_page_config(layout="wide", page_title="Agri-Food CO₂ Emissions Dashboar
 
 # ============ Load Assets ============
 # Logo
-logo_path = r'C:\Users\Right Click\Desktop\ml_2\SRC\Co2.jpeg'
+logo_path = r'C:\Users\Right Click\Desktop\co2\SRC\Co2.jpeg'
 try:
     logo = Image.open(logo_path)
 except Exception as e:
@@ -23,13 +23,13 @@ except Exception as e:
 # Load Data
 @st.cache_data
 def load_data():
-    return pd.read_csv(r'C:\Users\Right Click\Desktop\ml_2\DataSet\cleaned_data.csv')
+    return pd.read_csv(r'C:\Users\Right Click\Desktop\co2\DataSet\cleaned_data.csv')
 
 data = load_data()
 
 # Load Model and Scaler
-model_path = r"C:\Users\Right Click\Desktop\ml_2\Work Space\model.pkl"
-scaler_path = r"C:\Users\Right Click\Desktop\ml_2\Work Space\scaler.pkl"
+model_path = r"C:\Users\Right Click\Desktop\co2\Work Space\model.pkl"
+scaler_path = r"C:\Users\Right Click\Desktop\co2\Work Space\scaler.pkl"
 
 model = pickle.load(open(model_path, "rb"))
 scaler = pickle.load(open(scaler_path, "rb"))
@@ -100,7 +100,7 @@ elif page == "Correlation Heatmap":
     st.markdown("Understanding how features relate to CO₂ Emissions")
 
     # Load cleaned data
-    data = pd.read_csv(r'C:\Users\Right Click\Desktop\ml_2\DataSet\cleaned_data.csv')
+    data = pd.read_csv(r'C:\Users\Right Click\Desktop\co2\DataSet\cleaned_data.csv')
 
     # Keep only important features
     selected_features = [
@@ -137,9 +137,7 @@ elif page == "Correlation Heatmap":
     st.pyplot(fig3)
 
 # ============ Prediction Page ============
-# ============ Prediction Page ============
 elif page == "Predict Emissions":
-    import random  # استيراد مكتبة العشوائية
     st.header("Predict Total CO₂ Emissions")
 
     # اختيار الدولة
@@ -160,8 +158,7 @@ elif page == "Predict Emissions":
     if 'user_input' in st.session_state:
         user_input = st.session_state['user_input']
     else:
-        # إنشاء قيم افتراضية عشوائية لكل ميزة
-        user_input = {feature: round(random.uniform(10, 1000), 2) for feature in input_features}
+        user_input = {feature: None for feature in input_features}  # إذا لم توجد بيانات سابقة
 
     col1, col2, col3 = st.columns(3)
 
@@ -169,7 +166,7 @@ elif page == "Predict Emissions":
         with [col1, col2, col3][i % 3]:
             user_input[feature] = st.number_input(
                 f"{feature}", 
-                value=user_input.get(feature, round(random.uniform(10, 1000), 2)),  # قيمة افتراضية
+                value=user_input.get(feature),  # استخدام القيمة المدخلة مسبقًا إذا كانت موجودة
                 placeholder="Enter value"
             )
 
@@ -211,6 +208,8 @@ elif page == "Predict Emissions":
 
         except Exception as e:
             st.error(f"Prediction failed: {str(e)}")
+
+
 
 
 # # ============ Map Visualization Page ============
